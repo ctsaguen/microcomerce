@@ -49,6 +49,20 @@ public class ProductController {
 
         return produitsFiltres;
     }
+    
+    
+  //Récupérer la liste des produits par ordree alphabetique
+
+    @GetMapping(value = "/ProduitsAsc")
+
+    public MappingJacksonValue listeProduitsAsc() {
+
+        List<Product> produits = productDao.findByAgeOrderByLastnameDescr();
+
+        MappingJacksonValue produitsFiltres = new MappingJacksonValue(produits);
+
+        return produitsFiltres;
+    }
    
     
    //Calculer la marge de prix 
