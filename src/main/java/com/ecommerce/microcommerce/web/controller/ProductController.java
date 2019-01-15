@@ -88,7 +88,24 @@ public class ProductController {
         return produit;
     }
 
+  //ajouter un produit
+    @PostMapping(value = "/Produits")
 
+    public ResponseEntity<Void> ajouterProduit(@Valid @RequestBody Product product) {
+
+        Product productAdded =  productDao.save(product);
+
+        if (productAdded == null)
+            return ResponseEntity.noContent().build();
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(productAdded.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
+    }
 
 
     
