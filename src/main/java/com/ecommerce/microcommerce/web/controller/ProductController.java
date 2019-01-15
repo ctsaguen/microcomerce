@@ -16,6 +16,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -26,15 +28,16 @@ public class ProductController {
 
     @Autowired
     private ProductDao productDao;
+	private List<String> listeMarge;
 
 
     //Récupérer la liste des produits
 
-    @RequestMapping(value = "/Produits", method = RequestMethod.GET)
+    @GetMapping(value = "/Produits")
 
     public MappingJacksonValue listeProduits() {
 
-        Iterable<Product> produits = productDao.findAll();
+        List<Product> produits = productDao.findAll();
 
         SimpleBeanPropertyFilter monFiltre = SimpleBeanPropertyFilter.serializeAllExcept("prixAchat");
 
@@ -45,6 +48,30 @@ public class ProductController {
         produitsFiltres.setFilters(listDeNosFiltres);
 
         return produitsFiltres;
+    }
+   
+    
+   //Calculer la marge de prix 
+    
+    @GetMapping("/AdminProduits")
+    
+    public MappingJacksonValue calculerMargeProduit() {
+    	
+    	List<Product> listeTransit = productDao.findAll();
+    	
+    	HashMap<Product,Integer> listeMarge = new HashMap<>();
+    	
+    	listeTransit.forEach(item->{
+    		
+    	int	prixTransit = (int)(item.getPrix()-item.getPrixAchat());
+    	
+    	listeMarge.put(item, prixTransit);
+    	
+    	});
+    	
+    	 MappingJacksonValue produitsFiltres = new MappingJacksonValue(listeMarge);	 
+    	 
+    	return produitsFiltres;
     }
 
 
@@ -101,8 +128,7 @@ public class ProductController {
     public List<Product>  testeDeRequetes(@PathVariable int prix) {
 
         return productDao.chercherUnProduitCher(400);
-    }
-
+    } 
 
 
 }
